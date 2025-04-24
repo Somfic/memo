@@ -1,0 +1,134 @@
+permissions: write-all
+name: ci/cd
+on:
+    - push
+    - pull_request
+
+jobs:
+  test:
+    name: test
+    strategy:
+      fail-fast: false
+      matrix:
+        # os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          override: true
+          components: rustfmt, clippy
+
+      - name: Set up cargo cache
+        uses: actions/cache@v4
+        continue-on-error: false
+        with:
+          save-always: true
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/            
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
+        
+      - name: Test
+        run: cargo test
+
+
+  cicd:
+    needs: test
+    name: ci/cd
+    runs-on: ubuntu-latest
+    permissions: write-all
+    concurrency:
+      group: ${{ github.workflow }}
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          override: true
+          components: rustfmt, clippy
+
+      - name: Set up cargo cache
+        uses: actions/cache@v4
+        continue-on-error: false
+        with:
+          save-always: true
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/            
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
+
+      - name: Lint
+        run: |
+          cargo fmt --all -- --check
+          cargo check
+
+      # - name: Install cargo check tools
+      #   run: |
+      #     cargo install --locked cargo-deny || true
+      #     cargo install --locked cargo-outdated || true
+      #     cargo install --locked cargo-udeps || true
+      #     cargo install --locked cargo-audit || true
+      #     cargo install --locked cargo-pants || true
+
+      # - name: Check
+      #   run: |
+      #     cargo deny check -c config/cargo-deny.toml
+      #     cargo outdated
+      #     cargo udeps
+      #     rm -rf ~/.cargo/advisory-db
+      #     cargo audit
+      #     cargo pants
+
+      - name: Install committer
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        run: cargo install --locked committer || true
+
+      - name: Tag
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        run: |
+          committer tag
+          echo "COMMITTER_IS_NEW=$(cat .env/COMMITTER_IS_NEW)" >> $GITHUB_ENV
+          echo "COMMITTER_TAG=$(cat .env/COMMITTER_TAG)" >> $GITHUB_ENV
+
+      - name: Publish to crates.io
+        if: env.COMMITTER_IS_NEW == 'true' && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        run: cargo publish --allow-dirty
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+      - name: Push tag to origin
+        if: env.COMMITTER_IS_NEW == 'true' && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        run: git push --tags origin
+
+      - name: Create release
+        if: env.COMMITTER_IS_NEW == 'true' && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: target/release/*.tar.gz
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: ${{ env.COMMITTER_TAG }}
+          body_path: ".env/COMMITTER_CHANGELOG"
+          draft: false
