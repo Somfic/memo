@@ -22,10 +22,10 @@
             distance,
             depth: 10 - Math.abs(distance),
             scale: Math.max(0, 1 - Math.abs(distance) * 0.03),
-            rotation: Math.abs(distance) <= 1 ? 0 : (Math.random() - 0.5) * 15,
+            rotation: Math.abs(distance) <= 1 ? 0 : (Math.random() - 0.5) * 8,
             translateY:
-                distance >= 0 ? distance ** 1.5 * -10 : 200 - distance * 50,
-            opacity: distance >= 0 ? 1 - distance * 0.1 : 1 + distance * 0.3,
+                distance >= 0 ? distance ** 1.1 * -10 : 350 - distance * 30,
+            opacity: distance >= 0 ? 1 - distance * 0.01 : 1 + distance * 0.45,
         };
     });
 </script>

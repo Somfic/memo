@@ -11,6 +11,7 @@
         background-color: black;
         padding: 15px;
         border-radius: 40px;
+        z-index: 100;
     }
 
     .bar,

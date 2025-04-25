@@ -6,7 +6,7 @@
     export let isInBackground: boolean;
 </script>
 
-<div class="card">
+<div class="card" class:is-in-background={isInBackground}>
     <div class="card-content" class:is-in-background={isInBackground}>
         {#if streak}
             <div class="streak">
