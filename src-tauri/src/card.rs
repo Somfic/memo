@@ -12,7 +12,7 @@ pub struct Card {
 }
 
 #[derive(Serialize, Deserialize, Type)]
-struct Repititions {
+pub struct Repititions {
     successful: u32,
     total: u32,
 }
@@ -31,7 +31,7 @@ impl Repititions {
 
 #[derive(Serialize, Deserialize, Type)]
 #[serde(tag = "type", content = "value")]
-enum Question {
+pub enum Question {
     Closed(String, bool),
     Open(String, String),
 }
