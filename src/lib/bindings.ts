@@ -5,7 +5,14 @@
 
 
 export const commands = {
-
+async readDecksFromFile() : Promise<Result<Deck[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("read_decks_from_file") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+}
 }
 
 /** user-defined events **/
@@ -18,8 +25,10 @@ export const commands = {
 
 /** user-defined types **/
 
-export type Card = { id: number; question: Question; next_review: string; repititions: Repititions; ease_factor: number }
-export type Question = { type: "Closed"; value: [string, boolean] } | { type: "Open"; value: [string, string] }
+export type Answer = { type: "Text"; value: string }
+export type Card = { prompt: Prompt; answer: Answer; next_review: string; repititions: Repititions; ease_factor: number }
+export type Deck = { name: string; cards: Card[] }
+export type Prompt = { type: "Text"; value: string }
 export type Repititions = { successful: number; total: number }
 
 /** tauri-specta globals **/

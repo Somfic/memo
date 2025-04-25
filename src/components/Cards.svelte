@@ -16,21 +16,21 @@
         }
     }
 
-    $: styles = words.sort(Math.random).map((_, i) => {
+    $: styles = words.map((_, i) => {
         const distance = i - index;
         return {
             distance,
-            depth: 10 - Math.abs(distance),
+            depth: words.length - i,
             scale: Math.max(0, 1 - Math.abs(distance) * 0.02),
             rotation: Math.abs(distance) <= 1 ? 0 : (Math.random() - 0.5) * 8,
-            translateY: distance >= 0 ? distance ** 1.1 * -10 : 200,
+            translateY: distance >= 0 ? distance ** 1.1 * -10 : -200,
             opacity: distance >= 0 ? 1 - distance * 0.01 : 1 + distance * 0.999,
         };
     });
 </script>
 
 <div class="cards-container">
-    {#each words as word, i (word)}
+    {#each words as word, i}
         {#if styles[i].opacity > 0}
             <div
                 class="card"
@@ -41,7 +41,7 @@
                 --translateY: {styles[i].translateY}px; 
                 --opacity: {styles[i].opacity};"
             >
-                <Card {word} isInBackground={i !== index} streak={i} />
+                <Card {word} isInBackground={i > index} streak={i} />
             </div>
         {/if}
     {/each}
