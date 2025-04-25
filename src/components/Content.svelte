@@ -1,6 +1,10 @@
+<script>
+    import Cards from "./Cards.svelte";
+</script>
+
 <div class="content-wrapper">
     <div class="content">
-        <p>hi there!</p>
+        <Cards words={["A", "B", "C", "D", "E", "F", "G"]} />
     </div>
 </div>
 
@@ -20,7 +24,5 @@
         max-height: 400px;
         width: 100%;
         height: 100%;
-
-        background-color: #ffffff;
     }
 </style>
