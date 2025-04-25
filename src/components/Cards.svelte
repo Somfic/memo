@@ -2,32 +2,53 @@
     import Card from "$components/Card.svelte";
 
     export let words: string[] = [];
-    export let index = 0;
+    let index = 0;
 
-    $: previousWords = words.slice(0, index);
-    $: nextWords = words.slice(index + 1);
-
-    function getScale(depth: number): number {
-        return 1 - depth * 0.1;
+    export function advance() {
+        if (index < words.length - 1) {
+            index += 1;
+        }
     }
+
+    export function previous() {
+        if (index > 0) {
+            index -= 1;
+        }
+    }
+
+    $: styles = words.map((_, i) => {
+        const distance = i - index;
+        return {
+            distance,
+            depth: 10 - Math.abs(distance),
+            scale: Math.max(0, 1 - Math.abs(distance) * 0.03),
+            rotation: Math.abs(distance) <= 1 ? 0 : (Math.random() - 0.5) * 15,
+            translateY:
+                distance >= 0 ? distance ** 1.5 * -10 : 200 - distance * 50,
+            opacity: distance >= 0 ? 1 - distance * 0.1 : 1 + distance * 0.3,
+        };
+    });
 </script>
 
 <div class="cards-container">
-    {#each words as word, index}
-        <div
-            class="card"
-            style:--depth={index}
-            style:--scale={1 - index * 0.2}
-            style:--rotation={`${index == 0 ? 0 : (Math.random() - 0.5) * 2 * 6}deg`}
-            style:--translateY={`-${index ** 2 * 20 + index * 30}px`}
-            style:--opacity={1 - index * 0.4 + 0.5}
-        >
-            <Card {word} isInBackground={index != 0} />
-        </div>
+    {#each words as word, i (word)}
+        {#if styles[i].opacity > 0}
+            <div
+                class="card"
+                style="
+                --depth: {styles[i].depth}; 
+                --scale: {styles[i].scale}; 
+                --rotation: {styles[i].rotation}deg; 
+                --translateY: {styles[i].translateY}px; 
+                --opacity: {styles[i].opacity};"
+            >
+                <Card {word} isInBackground={i !== index} streak={i} />
+            </div>
+        {/if}
     {/each}
 </div>
 
-<style lang="cards-container">
+<style lang="scss">
     .cards-container {
         display: flex;
         flex-wrap: wrap;
@@ -37,15 +58,19 @@
         max-height: 400px;
         width: 100%;
         height: 100%;
+        position: relative;
     }
 
     .card {
         position: absolute;
-
-        z-index: calc(10 - var(--depth));
-        transition: all 0.3s ease-in-out;
+        z-index: var(--depth);
+        transition:
+            transform 500ms cubic-bezier(0.87, -0.41, 0.19, 1.44),
+            opacity 0.5s ease;
         transform: scale(var(--scale)) rotate(var(--rotation))
             translateY(var(--translateY));
         opacity: var(--opacity);
+        will-change: transform, opacity, z-index;
+        mix-blend-mode: normal;
     }
 </style>
