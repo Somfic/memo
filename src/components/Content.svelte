@@ -6,18 +6,22 @@
     let advance: () => void;
 
     onMount(() => {
-        document.onkeydown = (e: KeyboardEvent) => {
+        document.onkeyup = (e: KeyboardEvent) => {
             if (
                 e.key === "ArrowRight" ||
                 e.key === "ArrowDown" ||
                 e.key === " " ||
-                e.key === "Enter"
+                e.key === "Enter" ||
+                e.key.toUpperCase() === "D" ||
+                e.key.toUpperCase() === "S"
             ) {
                 advance();
             } else if (
                 e.key === "ArrowLeft" ||
                 e.key === "ArrowUp" ||
-                e.key === "Backspace"
+                e.key === "Backspace" ||
+                e.key.toUpperCase() === "W" ||
+                e.key.toUpperCase() === "A"
             ) {
                 previous();
             }

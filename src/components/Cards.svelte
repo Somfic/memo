@@ -16,12 +16,12 @@
         }
     }
 
-    $: styles = words.map((_, i) => {
+    $: styles = words.sort(Math.random).map((_, i) => {
         const distance = i - index;
         return {
             distance,
             depth: 10 - Math.abs(distance),
-            scale: Math.max(0, 1 - Math.abs(distance) * 0.03),
+            scale: Math.max(0, 1 - Math.abs(distance) * 0.02),
             rotation: Math.abs(distance) <= 1 ? 0 : (Math.random() - 0.5) * 8,
             translateY:
                 distance >= 0 ? distance ** 1.1 * -10 : 350 - distance * 30,

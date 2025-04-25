@@ -8,7 +8,7 @@
 
 <div class="card" class:is-in-background={isInBackground}>
     <div class="card-content" class:is-in-background={isInBackground}>
-        {#if streak}
+        {#if streak && streak >= 3}
             <div class="streak">
                 {streak}
                 <Flame color={"orange"} size={18} />
@@ -22,7 +22,7 @@
 
 <style lang="scss">
     .card {
-        background-color: #efefef;
+        background-color: #ffffff;
         border-radius: 30px;
         width: 364px;
         height: 167px;
