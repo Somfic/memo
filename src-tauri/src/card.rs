@@ -1,16 +1,17 @@
-use chrono::{Date, DateTime, Duration, NaiveDateTime, Utc};
+use chrono::{DateTime, Duration, Utc};
 use serde::{Deserialize, Serialize};
+use specta::Type;
 
-#[derive(Serialize, Deserialize)]
-struct Card {
-    id: u32,
-    question: Question,
-    next_review: DateTime<Utc>,
-    repititions: Repititions,
-    ease_factor: f32,
+#[derive(Serialize, Deserialize, Type)]
+pub struct Card {
+    pub id: u32,
+    pub question: Question,
+    pub next_review: DateTime<Utc>,
+    pub repititions: Repititions,
+    pub ease_factor: f32,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Type)]
 struct Repititions {
     successful: u32,
     total: u32,
@@ -28,7 +29,7 @@ impl Repititions {
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Type)]
 #[serde(tag = "type", content = "value")]
 enum Question {
     Closed(String, bool),
