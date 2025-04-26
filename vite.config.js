@@ -9,6 +9,7 @@ export default defineConfig(async () => ({
   resolve: {
     alias: {
       '$lib': path.resolve("./src/lib"),
+      '$gen': path.resolve("./src/gen"),
       '$components': path.resolve("./src/components"),
       '$styles': path.resolve("./src/styles"),
     },

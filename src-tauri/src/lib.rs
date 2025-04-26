@@ -1,4 +1,3 @@
-use crate::prelude::Result;
 use deck::Deck;
 use tauri_specta::collect_commands;
 
@@ -17,7 +16,7 @@ pub fn run() {
     spec_builder
         .export(
             specta_typescript::Typescript::default(),
-            "../src/lib/bindings.ts",
+            "../src/gen/bindings.ts",
         )
         .expect("Failed to export typescript bindings");
 

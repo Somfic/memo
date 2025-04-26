@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Flame } from "@lucide/svelte";
-    import type { Card as CardType } from "$lib/bindings";
+    import type { Card as CardType } from "$gen/bindings";
 
     export let card: CardType;
     export let streak: number | undefined = undefined;
@@ -9,13 +9,7 @@
 
 <div class="card" class:is-in-background={isInBackground}>
     <div class="card-content" class:is-in-background={isInBackground}>
-        {#if streak && streak >= 3}
-            <div class="streak">
-                {streak}
-                <Flame color={"orange"} size={18} />
-            </div>
-        {/if}
-        <div class="word">
+        <div class="prompt">
             {@html card.prompt.value}
         </div>
         <div class="answer">
@@ -33,13 +27,12 @@
         box-shadow: 0 0 40px rgba(0, 0, 0, 0.15);
         user-select: none;
 
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
         transition: all 0.3s ease-in-out;
 
-        padding: 5rem 2rem;
+        width: 600px;
+        height: 300px;
+
+        display: flex;
 
         :global(.code) {
             font-family: "Courier New", Courier, monospace;
@@ -51,13 +44,19 @@
 
         .card-content {
             transition: opacity 0.3s ease-in-out;
+            display: flex;
+            flex-grow: 1;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px;
 
             &.is-in-background {
                 opacity: 0;
             }
         }
 
-        .word {
+        .prompt {
             font-size: 30px;
             font-weight: bold;
             color: #333;

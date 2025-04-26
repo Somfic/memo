@@ -1,6 +1,6 @@
 <script lang="ts">
     import Card from "$components/Card.svelte";
-    import type { Card as CardType } from "$lib/bindings";
+    import type { Card as CardType } from "$gen/bindings";
 
     export let cards: CardType[] = [];
     let index = cards.length - 1;
@@ -23,8 +23,8 @@
             distance,
             depth: cards.length - i,
             scale: Math.max(0, 1 - Math.abs(distance) * 0.02),
-            rotation: Math.abs(distance) <= 1 ? 0 : (Math.random() - 0.5) * 8,
-            translateY: distance >= 0 ? distance ** 1.1 * -10 : -200,
+            rotation: Math.abs(distance) <= 1 ? 0 : (Math.random() - 0.5) * 10,
+            translateY: distance >= 0 ? distance ** 1.2 * -10 : -200,
             opacity: distance >= 0 ? 1 - distance * 0.01 : 1 + distance * 0.999,
         };
     });

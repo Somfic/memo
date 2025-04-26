@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import Cards from "./Cards.svelte";
-    import { commands, type Deck } from "$lib/bindings";
+    import { commands, type Deck } from "$gen/bindings";
 
     let decks: Deck[] = [];
     let previous: () => void;
@@ -9,7 +9,7 @@
 
     onMount(async () => {
         let decksResult = await commands.readDecksFromAnkiFile(
-            "C:\\Users\\Lucas\\Downloads\\LearnDutchorg_-_1000_Most_Common_Words_in_Dutch.apkg",
+            "/Users/lucas/Downloads/English_Italian_-_Assimil_words_Idiom_irregular_verbs.apkg",
         );
 
         if (decksResult.status === "ok") {

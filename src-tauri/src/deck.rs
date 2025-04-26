@@ -43,8 +43,11 @@ pub fn read_decks_from_anki_file(file_path: &str) -> Result<Vec<Deck>> {
         .read_to_end(&mut db_bytes)
         .map_err(|e| e.to_string())?;
 
-    std::fs::write("temp.anki2", &db_bytes).map_err(|e| e.to_string())?;
-    let conn = rusqlite::Connection::open("temp.anki2").map_err(|e| e.to_string())?;
+    let temp_path = std::env::temp_dir();
+    let temp_path = temp_path.join("temp.anki2");
+
+    std::fs::write(&temp_path, &db_bytes).map_err(|e| e.to_string())?;
+    let conn = rusqlite::Connection::open(&temp_path).map_err(|e| e.to_string())?;
 
     conn.execute_batch("PRAGMA journal_mode = OFF;")
         .map_err(|e| e.to_string())?;
@@ -91,11 +94,17 @@ pub fn read_decks_from_anki_file(file_path: &str) -> Result<Vec<Deck>> {
         cards.push(card);
     }
 
-    let mut result = Vec::new();
-    result.push(Deck {
+    // randomly sort the cards to shuffle them
+    use rand::seq::SliceRandom;
+    let cards = {
+        let mut rng = rand::rng();
+        cards.as_mut_slice().shuffle(&mut rng);
+        cards
+    };
+
+    Ok(vec![Deck {
         name: "main".to_string(),
-        cards: cards.iter().cloned().,
+        cards,
         description: "".to_string(),
-    });
-    Ok(result)
+    }])
 }
