@@ -24,7 +24,7 @@
 <style lang="scss">
     .card {
         background-color: #ffffff;
-        border-radius: 30px;
+        border-radius: 60px;
 
         font-size: 30px;
         box-shadow: 0 0 40px rgba(0, 0, 0, 0.15);
@@ -93,6 +93,14 @@
 
         &.is-flipped {
             transform: rotateX(180deg);
+        }
+
+        // When the card is in the background,
+        // we want to delay the transition so it
+        // doesn't visibly flip back
+        &.is-in-background {
+            transition-delay: 0.3s;
+            transition-duration: 0ms;
         }
 
         .card-content.answer {

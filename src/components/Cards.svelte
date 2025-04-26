@@ -28,10 +28,15 @@
         const distance = i - index;
         return {
             distance,
+            delay: distance * 10,
             depth: cards.length - i,
-            scale: Math.max(0, 1 - Math.abs(distance) * 0.02),
-            rotation: Math.abs(distance) <= 1 ? 0 : (Math.random() - 0.5) * 10,
-            translateY: distance >= 0 ? distance ** 1.2 * -10 : -200,
+            scale:
+                distance == 0 ? 1 : Math.max(0, 1 - Math.abs(distance) * 0.02),
+            rotation: Math.abs(distance) <= 1 ? 0 : (Math.random() - 0.5) * 2,
+            translateY:
+                distance >= 0
+                    ? distance ** 1.2 * -10 + Math.random() * 10
+                    : -200,
             opacity: distance >= 0 ? 1 - distance * 0.01 : 1 + distance * 0.999,
         };
     });
@@ -47,7 +52,8 @@
                 --scale: {styles[i].scale}; 
                 --rotation: {styles[i].rotation}deg; 
                 --translateY: {styles[i].translateY}px; 
-                --opacity: {styles[i].opacity};"
+                --opacity: {styles[i].opacity};
+                --delay: {styles[i].delay}ms;"
             >
                 <Card
                     card={cards[cards.length - i - 1]}
@@ -78,6 +84,7 @@
         transition:
             transform 500ms cubic-bezier(0.87, -0.41, 0.19, 1.44),
             opacity 0.5s ease;
+        transition-delay: var(--delay);
         transform: scale(var(--scale)) rotate(var(--rotation))
             translateY(var(--translateY));
         opacity: var(--opacity);

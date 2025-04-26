@@ -44,7 +44,12 @@
                 e.key.toUpperCase() === "W" ||
                 e.key.toUpperCase() === "A"
             ) {
-                previous();
+                if (isFlipped) {
+                    isFlipped = false;
+                    flip();
+                } else {
+                    previous();
+                }
             }
         };
     });
