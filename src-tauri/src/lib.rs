@@ -9,7 +9,8 @@ mod prelude;
 pub fn run() {
     let spec_builder = tauri_specta::Builder::<tauri::Wry>::new().commands(collect_commands![
         deck::read_decks_from_file,
-        deck::read_decks_from_anki_file
+        deck::read_decks_from_anki_file,
+        card::preview_next_review
     ]);
 
     #[cfg(debug_assertions)]
@@ -25,7 +26,8 @@ pub fn run() {
         .invoke_handler(spec_builder.invoke_handler())
         .invoke_handler(tauri::generate_handler![
             deck::read_decks_from_file,
-            deck::read_decks_from_anki_file
+            deck::read_decks_from_anki_file,
+            card::preview_next_review
         ])
         .setup(move |app| {
             spec_builder.mount_events(app);

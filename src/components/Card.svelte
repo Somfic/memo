@@ -1,6 +1,7 @@
 <script lang="ts">
     import { Flame } from "@lucide/svelte";
-    import type { Card as CardType } from "$gen/bindings";
+    import { commands, type Card as CardType } from "$gen/bindings";
+    import { onMount } from "svelte";
 
     export let card: CardType;
     export let streak: number | undefined = undefined;

@@ -1,8 +1,22 @@
+<script lang="ts">
+  import { commands, type AnswerQuality, type Card } from "$gen/bindings";
+  import { onMount } from "svelte";
+  import { card } from "../state";
+
+  export let state: "Thinking" | "WasRight" | "WasWrong" = "Thinking";
+
+  let previews: Partial<{ [key in AnswerQuality]: string }> | undefined;
+
+  card.subscribe(async (card) => {
+    previews = await commands.previewNextReview(card);
+  });
+</script>
+
 <div class="bar">
   <div class="items">
-    <div class="item left">left</div>
-    <div class="item center">center</div>
-    <div class="item right">right</div>
+    <div class="item left">{previews ? previews["OkEasy"] : ""}</div>
+    <div class="item center">{previews ? previews["OkHesitated"] : ""}</div>
+    <div class="item right">{previews ? previews["OkDifficult"] : ""}</div>
   </div>
 </div>
 

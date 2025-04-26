@@ -20,6 +20,9 @@ async readDecksFromAnkiFile(filePath: string) : Promise<Result<Deck[], string>> 
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
+},
+async previewNextReview(card: Card) : Promise<Partial<{ [key in AnswerQuality]: string }>> {
+    return await TAURI_INVOKE("preview_next_review", { card });
 }
 }
 
@@ -34,6 +37,7 @@ async readDecksFromAnkiFile(filePath: string) : Promise<Result<Deck[], string>> 
 /** user-defined types **/
 
 export type Answer = { type: "Text"; value: string }
+export type AnswerQuality = "OkEasy" | "OkHesitated" | "OkDifficult" | "NotOkRemembered" | "NotOkFamiliar" | "NotOkForgot"
 export type Card = { prompt: Prompt; answer: Answer; next_review: string; repititions: Repititions; ease_factor: number }
 export type Deck = { name: string; description: string; cards: Card[] }
 export type Prompt = { type: "Text"; value: string }

@@ -1,6 +1,7 @@
 <script lang="ts">
     import Card from "$components/Card.svelte";
     import type { Card as CardType } from "$gen/bindings";
+    import { card } from "../state";
 
     export let cards: CardType[] = [];
     let index = cards.length - 1;
@@ -9,6 +10,7 @@
         if (index > 0) {
             index -= 1;
             isFlipped = false;
+            card.set(cards[index]);
         }
     }
 
@@ -16,6 +18,7 @@
         if (index < cards.length - 1) {
             index += 1;
             isFlipped = false;
+            card.set(cards[index]);
         }
     }
 
