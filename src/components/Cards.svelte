@@ -36,7 +36,7 @@
             translateY:
                 distance >= 0
                     ? distance ** 1.2 * -10 + Math.random() * 10
-                    : -200,
+                    : -100,
             opacity: distance >= 0 ? 1 - distance * 0.01 : 1 + distance * 0.999,
         };
     });
