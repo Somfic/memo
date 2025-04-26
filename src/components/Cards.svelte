@@ -1,8 +1,9 @@
 <script lang="ts">
     import Card from "$components/Card.svelte";
+    import type { Card as CardType } from "$lib/bindings";
 
-    export let words: string[] = [];
-    let index = words.length - 1;
+    export let cards: CardType[] = [];
+    let index = cards.length - 1;
 
     export function advance() {
         if (index > 0) {
@@ -11,16 +12,16 @@
     }
 
     export function previous() {
-        if (index < words.length - 1) {
+        if (index < cards.length - 1) {
             index += 1;
         }
     }
 
-    $: styles = words.map((_, i) => {
+    $: styles = cards.map((_, i) => {
         const distance = i - index;
         return {
             distance,
-            depth: words.length - i,
+            depth: cards.length - i,
             scale: Math.max(0, 1 - Math.abs(distance) * 0.02),
             rotation: Math.abs(distance) <= 1 ? 0 : (Math.random() - 0.5) * 8,
             translateY: distance >= 0 ? distance ** 1.1 * -10 : -200,
@@ -30,7 +31,7 @@
 </script>
 
 <div class="cards-container">
-    {#each words as _, i}
+    {#each cards as _, i}
         {#if styles[i].opacity > 0}
             <div
                 class="card"
@@ -42,7 +43,7 @@
                 --opacity: {styles[i].opacity};"
             >
                 <Card
-                    word={words[words.length - i - 1]}
+                    card={cards[cards.length - i - 1]}
                     isInBackground={i > index}
                 />
             </div>

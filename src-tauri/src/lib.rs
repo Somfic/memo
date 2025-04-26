@@ -6,17 +6,12 @@ mod card;
 mod deck;
 mod prelude;
 
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-#[tauri::command]
-#[specta::specta]
-fn read_decks_from_file() -> Result<Vec<Deck>> {
-    deck::read_decks_from_file("decks.json")
-}
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let spec_builder = tauri_specta::Builder::<tauri::Wry>::new()
-        .commands(collect_commands![read_decks_from_file]);
+    let spec_builder = tauri_specta::Builder::<tauri::Wry>::new().commands(collect_commands![
+        deck::read_decks_from_file,
+        deck::read_decks_from_anki_file
+    ]);
 
     #[cfg(debug_assertions)]
     spec_builder
@@ -29,7 +24,10 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(spec_builder.invoke_handler())
-        .invoke_handler(tauri::generate_handler![read_decks_from_file])
+        .invoke_handler(tauri::generate_handler![
+            deck::read_decks_from_file,
+            deck::read_decks_from_anki_file
+        ])
         .setup(move |app| {
             spec_builder.mount_events(app);
             Ok(())

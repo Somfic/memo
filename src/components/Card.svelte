@@ -1,7 +1,8 @@
 <script lang="ts">
     import { Flame } from "@lucide/svelte";
+    import type { Card as CardType } from "$lib/bindings";
 
-    export let word: string;
+    export let card: CardType;
     export let streak: number | undefined = undefined;
     export let isInBackground: boolean;
 </script>
@@ -15,7 +16,10 @@
             </div>
         {/if}
         <div class="word">
-            {word}
+            {@html card.prompt.value}
+        </div>
+        <div class="answer">
+            {@html card.answer.value}
         </div>
     </div>
 </div>
@@ -24,16 +28,26 @@
     .card {
         background-color: #ffffff;
         border-radius: 30px;
-        width: 364px;
-        height: 167px;
+
         font-size: 30px;
         box-shadow: 0 0 40px rgba(0, 0, 0, 0.15);
         user-select: none;
 
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
         transition: all 0.3s ease-in-out;
+
+        padding: 5rem 2rem;
+
+        :global(.code) {
+            font-family: "Courier New", Courier, monospace;
+        }
+
+        :global(div) {
+            display: inline-block;
+        }
 
         .card-content {
             transition: opacity 0.3s ease-in-out;
@@ -47,6 +61,12 @@
             font-size: 30px;
             font-weight: bold;
             color: #333;
+            text-align: center;
+        }
+
+        .answer {
+            color: #333;
+            text-align: center;
         }
 
         .streak {

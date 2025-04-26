@@ -1,11 +1,23 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import Cards from "./Cards.svelte";
+    import { commands, type Deck } from "$lib/bindings";
 
+    let decks: Deck[] = [];
     let previous: () => void;
     let advance: () => void;
 
-    onMount(() => {
+    onMount(async () => {
+        let decksResult = await commands.readDecksFromAnkiFile(
+            "C:\\Users\\Lucas\\Downloads\\LearnDutchorg_-_1000_Most_Common_Words_in_Dutch.apkg",
+        );
+
+        if (decksResult.status === "ok") {
+            decks = decksResult.data;
+        } else {
+            console.error(decksResult.error);
+        }
+
         document.onkeyup = (e: KeyboardEvent) => {
             if (
                 e.key === "ArrowRight" ||
@@ -31,38 +43,9 @@
 
 <div class="content-wrapper">
     <div class="content">
-        <Cards
-            words={[
-                "A",
-                "B",
-                "C",
-                "D",
-                "E",
-                "F",
-                "G",
-                "H",
-                "I",
-                "J",
-                "K",
-                "L",
-                "M",
-                "N",
-                "O",
-                "P",
-                "Q",
-                "R",
-                "S",
-                "T",
-                "U",
-                "V",
-                "W",
-                "X",
-                "Y",
-                "Z",
-            ]}
-            bind:previous
-            bind:advance
-        />
+        {#each decks as deck}
+            <Cards cards={deck.cards} bind:previous bind:advance />
+        {/each}
     </div>
 </div>
 

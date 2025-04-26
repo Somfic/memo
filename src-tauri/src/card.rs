@@ -25,8 +25,8 @@ pub enum Answer {
 
 #[derive(Serialize, Deserialize, Type)]
 pub struct Repititions {
-    successful: u32,
-    total: u32,
+    pub successful: u32,
+    pub total: u32,
 }
 
 impl Repititions {

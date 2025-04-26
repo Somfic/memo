@@ -5,9 +5,17 @@
 
 
 export const commands = {
-async readDecksFromFile() : Promise<Result<Deck[], string>> {
+async readDecksFromFile(filePath: string) : Promise<Result<Deck[], string>> {
     try {
-    return { status: "ok", data: await TAURI_INVOKE("read_decks_from_file") };
+    return { status: "ok", data: await TAURI_INVOKE("read_decks_from_file", { filePath }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async readDecksFromAnkiFile(filePath: string) : Promise<Result<Deck[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("read_decks_from_anki_file", { filePath }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -27,7 +35,7 @@ async readDecksFromFile() : Promise<Result<Deck[], string>> {
 
 export type Answer = { type: "Text"; value: string }
 export type Card = { prompt: Prompt; answer: Answer; next_review: string; repititions: Repititions; ease_factor: number }
-export type Deck = { name: string; cards: Card[] }
+export type Deck = { name: string; description: string; cards: Card[] }
 export type Prompt = { type: "Text"; value: string }
 export type Repititions = { successful: number; total: number }
 
