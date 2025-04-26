@@ -2,7 +2,7 @@
     import { Flame } from "@lucide/svelte";
 
     export let word: string;
-    export let streak: number | undefined;
+    export let streak: number | undefined = undefined;
     export let isInBackground: boolean;
 </script>
 

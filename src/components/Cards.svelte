@@ -2,17 +2,17 @@
     import Card from "$components/Card.svelte";
 
     export let words: string[] = [];
-    let index = 0;
+    let index = words.length - 1;
 
     export function advance() {
-        if (index < words.length - 1) {
-            index += 1;
+        if (index > 0) {
+            index -= 1;
         }
     }
 
     export function previous() {
-        if (index > 0) {
-            index -= 1;
+        if (index < words.length - 1) {
+            index += 1;
         }
     }
 
@@ -30,7 +30,7 @@
 </script>
 
 <div class="cards-container">
-    {#each words as word, i}
+    {#each words as _, i}
         {#if styles[i].opacity > 0}
             <div
                 class="card"
@@ -41,7 +41,10 @@
                 --translateY: {styles[i].translateY}px; 
                 --opacity: {styles[i].opacity};"
             >
-                <Card {word} isInBackground={i > index} streak={i} />
+                <Card
+                    word={words[words.length - i - 1]}
+                    isInBackground={i > index}
+                />
             </div>
         {/if}
     {/each}
