@@ -8,13 +8,20 @@
     export function advance() {
         if (index > 0) {
             index -= 1;
+            isFlipped = false;
         }
     }
 
     export function previous() {
         if (index < cards.length - 1) {
             index += 1;
+            isFlipped = false;
         }
+    }
+
+    let isFlipped = false;
+    export function flip() {
+        isFlipped = !isFlipped;
     }
 
     $: styles = cards.map((_, i) => {
@@ -45,6 +52,7 @@
                 <Card
                     card={cards[cards.length - i - 1]}
                     isInBackground={i > index}
+                    isFlipped={i === index ? isFlipped : false}
                 />
             </div>
         {/if}

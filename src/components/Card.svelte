@@ -5,16 +5,19 @@
     export let card: CardType;
     export let streak: number | undefined = undefined;
     export let isInBackground: boolean;
+    export let isFlipped: boolean = false;
 </script>
 
-<div class="card" class:is-in-background={isInBackground}>
-    <div class="card-content" class:is-in-background={isInBackground}>
-        <div class="prompt">
-            {@html card.prompt.value}
-        </div>
-        <div class="answer">
-            {@html card.answer.value}
-        </div>
+<div
+    class="card"
+    class:is-in-background={isInBackground}
+    class:is-flipped={isFlipped}
+>
+    <div class="card-content prompt" class:is-in-background={isInBackground}>
+        {@html card.prompt.value}
+    </div>
+    <div class="card-content answer" class:is-in-background={isInBackground}>
+        {@html card.answer.value}
     </div>
 </div>
 
@@ -33,6 +36,11 @@
         height: 300px;
 
         display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        perspective: 100000px;
+        transform-style: preserve-3d;
 
         :global(.code) {
             font-family: "Courier New", Courier, monospace;
@@ -43,6 +51,7 @@
         }
 
         .card-content {
+            position: absolute;
             transition: opacity 0.3s ease-in-out;
             display: flex;
             flex-grow: 1;
@@ -50,6 +59,7 @@
             align-items: center;
             justify-content: center;
             padding: 50px;
+            backface-visibility: hidden;
 
             &.is-in-background {
                 opacity: 0;
@@ -79,6 +89,14 @@
             padding: 5px 10px;
             border-radius: 5px;
             font-size: 16px;
+        }
+
+        &.is-flipped {
+            transform: rotateX(180deg);
+        }
+
+        .card-content.answer {
+            transform: rotateX(180deg);
         }
     }
 </style>

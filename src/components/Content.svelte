@@ -6,6 +6,9 @@
     let decks: Deck[] = [];
     let previous: () => void;
     let advance: () => void;
+    let flip: () => void;
+
+    let isFlipped = false;
 
     onMount(async () => {
         let decksResult = await commands.readDecksFromAnkiFile(
@@ -27,7 +30,13 @@
                 e.key.toUpperCase() === "D" ||
                 e.key.toUpperCase() === "S"
             ) {
-                advance();
+                if (!isFlipped) {
+                    isFlipped = true;
+                    flip();
+                } else {
+                    isFlipped = false;
+                    advance();
+                }
             } else if (
                 e.key === "ArrowLeft" ||
                 e.key === "ArrowUp" ||
@@ -44,7 +53,7 @@
 <div class="content-wrapper">
     <div class="content">
         {#each decks as deck}
-            <Cards cards={deck.cards} bind:previous bind:advance />
+            <Cards cards={deck.cards} bind:previous bind:advance bind:flip />
         {/each}
     </div>
 </div>
