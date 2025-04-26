@@ -2,6 +2,7 @@
   import { commands, type AnswerQuality, type Card } from "$gen/bindings";
   import { onMount } from "svelte";
   import { card } from "../state";
+  import RelativeTime from "./RelativeTime.svelte";
 
   export let state: "Thinking" | "WasRight" | "WasWrong" = "Thinking";
 
@@ -14,13 +15,22 @@
 
 <div class="bar">
   <div class="items">
-    <div class="item left">{previews ? previews["OkEasy"] : ""}</div>
-    <div class="item center">{previews ? previews["OkHesitated"] : ""}</div>
-    <div class="item right">{previews ? previews["OkDifficult"] : ""}</div>
+    {#if previews}
+      <div class="item left"><RelativeTime time={previews["OkEasy"]} /></div>
+      <div class="item center">
+        <RelativeTime time={previews["OkHesitated"]} />
+      </div>
+      <div class="item right">
+        <RelativeTime time={previews["OkDifficult"]} />
+      </div>
+    {/if}
   </div>
 </div>
 
 <style lang="scss">
+  $big-border-radius: 40px;
+  $small-border-radius: 10px;
+
   .bar {
     background-color: black;
     padding: 15px;
@@ -43,16 +53,16 @@
     background-color: #1a1a1a;
     color: white;
     padding: 10px 22px;
-    border-radius: 10px;
+    border-radius: $small-border-radius;
 
     &.left {
-      border-top-left-radius: 20px;
-      border-bottom-left-radius: 20px;
+      border-top-left-radius: $big-border-radius;
+      border-bottom-left-radius: $big-border-radius;
     }
 
     &.right {
-      border-top-right-radius: 20px;
-      border-bottom-right-radius: 20px;
+      border-top-right-radius: $big-border-radius;
+      border-bottom-right-radius: $big-border-radius;
     }
   }
 </style>

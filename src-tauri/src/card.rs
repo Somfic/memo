@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use chrono::{DateTime, Duration, Utc};
+use chrono::{Date, DateTime, Duration, NaiveDate, Utc};
 use serde::{Deserialize, Serialize};
 use specta::Type;
 
@@ -8,7 +8,7 @@ use specta::Type;
 pub struct Card {
     pub prompt: Prompt,
     pub answer: Answer,
-    pub next_review: DateTime<Utc>,
+    pub next_review: NaiveDate,
     pub repititions: Repititions,
     pub ease_factor: f32,
 }
@@ -58,42 +58,45 @@ impl Card {
         self.next_review = self.next_review_for_quality(quality);
 
         let quality = quality as u8 as f32;
-        self.ease_factor += 0.1 - (5.0 - quality) * (0.08 + (5.0 - quality) * 0.02);
-        if self.ease_factor < 1.3 {
-            self.ease_factor = 1.3;
-        }
+        self.ease_factor = f32::max(
+            1.3,
+            self.ease_factor + 0.1 - (5.0 - quality) * (0.08 + (5.0 - quality) * 0.02),
+        );
     }
 
-    fn next_review_for_quality(&self, quality: AnswerQuality) -> DateTime<Utc> {
-        let quality = quality as u8;
-
-        if quality < 3 {
-            Utc::now() + Duration::days(1)
+    fn next_review_for_quality(&self, quality: AnswerQuality) -> NaiveDate {
+        let next_review_in_days = if matches!(
+            quality,
+            AnswerQuality::NotOkForgot
+                | AnswerQuality::NotOkFamiliar
+                | AnswerQuality::NotOkRemembered
+        ) {
+            1
         } else {
-            // user was right
-            let next_review_in_days = match self.repititions.successful {
+            match self.repititions.total + 1 {
                 1 => 1,
                 2 => 6,
                 _ => {
-                    let days = self.next_review.timestamp() - Utc::now().timestamp();
-                    let days = (days / 86400) as f32;
-                    let next_review_in_days = (days * self.ease_factor).round() as i64;
-                    if next_review_in_days < 1 {
-                        1
-                    } else {
-                        next_review_in_days
-                    }
-                }
-            };
+                    let days = self
+                        .next_review
+                        .signed_duration_since(Utc::now().date_naive())
+                        .num_days();
 
-            Utc::now() + Duration::days(next_review_in_days)
-        }
+                    println!("ease_factor: {}", self.ease_factor);
+                    println!("days: {}", days);
+
+                    i64::max(1, (days as f32 * self.ease_factor).round() as i64)
+                }
+            }
+        };
+
+        (Utc::now() + Duration::days(next_review_in_days)).date_naive()
     }
 }
 
 #[tauri::command]
 #[specta::specta]
-pub fn preview_next_review(card: Card) -> HashMap<AnswerQuality, DateTime<Utc>> {
+pub fn preview_next_review(card: Card) -> HashMap<AnswerQuality, NaiveDate> {
     let mut result = HashMap::new();
     for quality in [
         AnswerQuality::OkEasy,

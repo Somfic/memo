@@ -72,12 +72,19 @@ pub fn read_decks_from_anki_file(file_path: &str) -> Result<Vec<Deck>> {
         .query_map([], |row| {
             let flds: String = row.get(0)?;
             let parts: Vec<&str> = flds.split('\u{1f}').collect();
-            let prompt = Prompt::Text(parts[0].to_string());
+            // replace anything within brackets
+            let prompt = Prompt::Text(
+                parts
+                    .first()
+                    .unwrap_or(&"")
+                    .to_string()
+                    .replace(r"\[.*?\]", ""),
+            );
             let answer = Answer::Text(parts.get(1).unwrap_or(&"").to_string());
-            let next_review = chrono::Utc::now();
+            let next_review = (chrono::Utc::now()).date_naive();
             let repititions = Repititions {
                 successful: 0,
-                total: 0,
+                total: 1,
             };
             let ease_factor = 1.3;
             Ok(Card {

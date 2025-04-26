@@ -12,7 +12,7 @@
 
     onMount(async () => {
         let decksResult = await commands.readDecksFromAnkiFile(
-            "/Users/lucas/Downloads/English_Italian_-_Assimil_words_Idiom_irregular_verbs.apkg",
+            "C:\\Users\\Lucas\\Downloads\\LearnDutchorg_-_1000_Most_Common_Words_in_Dutch.apkg",
         );
 
         if (decksResult.status === "ok") {

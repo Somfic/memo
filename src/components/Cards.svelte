@@ -84,9 +84,7 @@
     .card {
         position: absolute;
         z-index: var(--depth);
-        transition:
-            transform 500ms cubic-bezier(0.87, -0.41, 0.19, 1.44),
-            opacity 0.5s ease;
+        transition: all 500ms cubic-bezier(0.87, -0.41, 0.19, 1.44);
         transition-delay: var(--delay);
         transform: scale(var(--scale)) rotate(var(--rotation))
             translateY(var(--translateY));
