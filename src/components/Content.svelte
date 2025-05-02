@@ -1,83 +1,83 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import Cards from "./Cards.svelte";
-    import { commands, type Deck } from "$gen/bindings";
+  import { onMount } from "svelte";
+  import Cards from "./Cards.svelte";
+  import { commands, type Deck } from "$gen/bindings";
 
-    let decks: Deck[] = [];
-    let previous: () => void;
-    let advance: () => void;
-    let flip: () => void;
+  let decks: Deck[] = [];
+  let previous: () => void;
+  let advance: () => void;
+  let flip: () => void;
 
-    let isFlipped = false;
+  let isFlipped = false;
 
-    onMount(async () => {
-        let decksResult = await commands.readDecksFromAnkiFile(
-            "C:\\Users\\Lucas\\Downloads\\LearnDutchorg_-_1000_Most_Common_Words_in_Dutch.apkg",
-        );
+  onMount(async () => {
+    let decksResult = await commands.readDecksFromAnkiFile(
+      "C:\\Users\\thevi\\Downloads\\LearnDutchorg_-_1000_Most_Common_Words_in_Dutch.apkg",
+    );
 
-        if (decksResult.status === "ok") {
-            decks = decksResult.data;
+    if (decksResult.status === "ok") {
+      decks = decksResult.data;
+    } else {
+      console.error(decksResult.error);
+    }
+
+    document.onkeyup = (e: KeyboardEvent) => {
+      if (
+        e.key === "ArrowRight" ||
+        e.key === "ArrowDown" ||
+        e.key === " " ||
+        e.key === "Enter" ||
+        e.key.toUpperCase() === "D" ||
+        e.key.toUpperCase() === "S"
+      ) {
+        if (!isFlipped) {
+          isFlipped = true;
+          flip();
         } else {
-            console.error(decksResult.error);
+          isFlipped = false;
+          advance();
         }
-
-        document.onkeyup = (e: KeyboardEvent) => {
-            if (
-                e.key === "ArrowRight" ||
-                e.key === "ArrowDown" ||
-                e.key === " " ||
-                e.key === "Enter" ||
-                e.key.toUpperCase() === "D" ||
-                e.key.toUpperCase() === "S"
-            ) {
-                if (!isFlipped) {
-                    isFlipped = true;
-                    flip();
-                } else {
-                    isFlipped = false;
-                    advance();
-                }
-            } else if (
-                e.key === "ArrowLeft" ||
-                e.key === "ArrowUp" ||
-                e.key === "Backspace" ||
-                e.key.toUpperCase() === "W" ||
-                e.key.toUpperCase() === "A"
-            ) {
-                if (isFlipped) {
-                    isFlipped = false;
-                    flip();
-                } else {
-                    previous();
-                }
-            }
-        };
-    });
+      } else if (
+        e.key === "ArrowLeft" ||
+        e.key === "ArrowUp" ||
+        e.key === "Backspace" ||
+        e.key.toUpperCase() === "W" ||
+        e.key.toUpperCase() === "A"
+      ) {
+        if (isFlipped) {
+          isFlipped = false;
+          flip();
+        } else {
+          previous();
+        }
+      }
+    };
+  });
 </script>
 
 <div class="content-wrapper">
-    <div class="content">
-        {#each decks as deck}
-            <Cards cards={deck.cards} bind:previous bind:advance bind:flip />
-        {/each}
-    </div>
+  <div class="content">
+    {#each decks as deck}
+      <Cards cards={deck.cards} bind:previous bind:advance bind:flip />
+    {/each}
+  </div>
 </div>
 
 <style lang="scss">
-    .content-wrapper {
-        flex-grow: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+  .content-wrapper {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-    .content {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        max-width: 800px;
-        max-height: 400px;
-        width: 100%;
-        height: 100%;
-    }
+  .content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 800px;
+    max-height: 400px;
+    width: 100%;
+    height: 100%;
+  }
 </style>

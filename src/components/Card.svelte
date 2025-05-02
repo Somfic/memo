@@ -4,16 +4,15 @@
     import { onMount } from "svelte";
 
     export let card: CardType;
-    export let streak: number | undefined = undefined;
+    export let streak: number;
     export let isInBackground: boolean;
     export let isFlipped: boolean = false;
 </script>
 
-<div
-    class="card"
-    class:is-in-background={isInBackground}
-    class:is-flipped={isFlipped}
->
+<div class="card" class:is-in-background={isInBackground} class:is-flipped={isFlipped}>
+    <div class="header" style="opacity:{isFlipped ? '1' : '0'}">
+        {streak > 3 ? streak : ""}
+    </div>
     <div class="card-content prompt" class:is-in-background={isInBackground}>
         {@html card.prompt.value}
     </div>
@@ -65,6 +64,19 @@
             &.is-in-background {
                 opacity: 0;
             }
+        }
+
+        .header {
+            position: absolute;
+            backface-visibility: hidden;
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            bottom: 0;
+            padding: 2% 7%;
+            transform: rotateX(180deg);
+            transition: 250ms ease;
+            transition-delay: 10ms;
         }
 
         .prompt {
